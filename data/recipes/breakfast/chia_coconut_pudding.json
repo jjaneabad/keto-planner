@@ -1,0 +1,12 @@
+{
+  "id": "chia_coconut_pudding",
+  "name": "Chia Coconut Pudding",
+  "meal": "breakfast",
+  "servings": 1,
+  "prep_minutes": 5,
+  "ingredients": [
+    { "item": "chia_seeds", "qty_g": 30, "category": "other" },
+    { "item": "coconut_milk", "qty_g": 150, "category": "dairy", "note": "canned, full fat" },
+    { "item": "macadamia_nuts", "qty_g": 20, "category": "other", "note": "chopped, topping" }
+  ]
+}

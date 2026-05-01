@@ -1,0 +1,13 @@
+{
+  "id": "turkey_avocado_lettuce_roll",
+  "name": "Turkey & Avocado Lettuce Roll",
+  "meal": "lunch",
+  "servings": 1,
+  "prep_minutes": 5,
+  "ingredients": [
+    { "item": "turkey_breast", "qty_g": 120, "category": "protein", "note": "sliced" },
+    { "item": "avocado", "qty_g": 80, "category": "vegetable", "note": "half, sliced" },
+    { "item": "lettuce_romaine", "qty_g": 80, "category": "vegetable", "note": "as wraps" },
+    { "item": "mayonnaise", "qty_g": 15, "category": "fats_oils" }
+  ]
+}

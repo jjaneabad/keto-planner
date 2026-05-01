@@ -1,0 +1,13 @@
+{
+  "id": "lamb_brussels_sprouts",
+  "name": "Lamb with Roasted Brussels Sprouts",
+  "meal": "dinner",
+  "servings": 1,
+  "prep_minutes": 30,
+  "ingredients": [
+    { "item": "lamb", "qty_g": 180, "category": "protein" },
+    { "item": "brussels_sprouts", "qty_g": 150, "category": "vegetable", "note": "halved" },
+    { "item": "olive_oil", "qty_g": 15, "category": "fats_oils" },
+    { "item": "garlic", "qty_g": 5, "category": "vegetable", "note": "1 clove" }
+  ]
+}

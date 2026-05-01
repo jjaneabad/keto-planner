@@ -1,0 +1,12 @@
+{
+  "id": "baked_avocado_eggs",
+  "name": "Baked Avocado Eggs",
+  "meal": "breakfast",
+  "servings": 1,
+  "prep_minutes": 20,
+  "ingredients": [
+    { "item": "avocado", "qty_g": 160, "category": "vegetable", "note": "1 whole" },
+    { "item": "eggs", "qty_g": 100, "category": "protein", "note": "2 large" },
+    { "item": "cheddar", "qty_g": 20, "category": "dairy", "note": "grated on top" }
+  ]
+}

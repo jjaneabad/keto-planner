@@ -1,0 +1,13 @@
+{
+  "id": "egg_salad_lettuce_cups",
+  "name": "Egg Salad Lettuce Cups",
+  "meal": "lunch",
+  "servings": 1,
+  "prep_minutes": 10,
+  "ingredients": [
+    { "item": "eggs", "qty_g": 200, "category": "protein", "note": "4 large, hard-boiled" },
+    { "item": "mayonnaise", "qty_g": 30, "category": "fats_oils" },
+    { "item": "mustard_dijon", "qty_g": 5, "category": "other" },
+    { "item": "lettuce_romaine", "qty_g": 80, "category": "vegetable", "note": "as cups" }
+  ]
+}

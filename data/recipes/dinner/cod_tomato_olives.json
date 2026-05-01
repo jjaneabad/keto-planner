@@ -1,0 +1,14 @@
+{
+  "id": "cod_tomato_olives",
+  "name": "Cod with Tomato & Olives",
+  "meal": "dinner",
+  "servings": 1,
+  "prep_minutes": 20,
+  "ingredients": [
+    { "item": "cod", "qty_g": 180, "category": "protein" },
+    { "item": "tomato", "qty_g": 100, "category": "vegetable", "note": "diced" },
+    { "item": "olives_black", "qty_g": 40, "category": "vegetable" },
+    { "item": "olive_oil", "qty_g": 15, "category": "fats_oils" },
+    { "item": "garlic", "qty_g": 5, "category": "vegetable", "note": "1 clove" }
+  ]
+}

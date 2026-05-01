@@ -1,0 +1,14 @@
+{
+  "id": "cauliflower_cheese_soup",
+  "name": "Cauliflower Cheese Soup",
+  "meal": "lunch",
+  "servings": 1,
+  "prep_minutes": 25,
+  "ingredients": [
+    { "item": "cauliflower", "qty_g": 200, "category": "vegetable" },
+    { "item": "cheddar", "qty_g": 40, "category": "dairy", "note": "grated, stirred in" },
+    { "item": "heavy_cream", "qty_g": 50, "category": "dairy" },
+    { "item": "butter", "qty_g": 15, "category": "fats_oils" },
+    { "item": "garlic", "qty_g": 5, "category": "vegetable", "note": "1 clove" }
+  ]
+}

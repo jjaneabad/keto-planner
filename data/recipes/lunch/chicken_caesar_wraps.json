@@ -1,0 +1,14 @@
+{
+  "id": "chicken_caesar_wraps",
+  "name": "Chicken Caesar Lettuce Wraps",
+  "meal": "lunch",
+  "servings": 1,
+  "prep_minutes": 10,
+  "ingredients": [
+    { "item": "chicken_breast", "qty_g": 150, "category": "protein", "note": "cooked, sliced" },
+    { "item": "lettuce_romaine", "qty_g": 100, "category": "vegetable", "note": "whole leaves as wraps" },
+    { "item": "parmesan", "qty_g": 20, "category": "dairy", "note": "shaved" },
+    { "item": "olive_oil", "qty_g": 15, "category": "fats_oils", "note": "as dressing" },
+    { "item": "lemon_juice", "qty_g": 10, "category": "other" }
+  ]
+}

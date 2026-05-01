@@ -1,0 +1,12 @@
+{
+  "id": "salmon_cream_cheese_rolls",
+  "name": "Smoked Salmon & Cream Cheese Rolls",
+  "meal": "breakfast",
+  "servings": 1,
+  "prep_minutes": 5,
+  "ingredients": [
+    { "item": "salmon", "qty_g": 100, "category": "protein", "note": "smoked slices" },
+    { "item": "cream_cheese", "qty_g": 50, "category": "dairy" },
+    { "item": "cucumber", "qty_g": 60, "category": "vegetable", "note": "sliced" }
+  ]
+}

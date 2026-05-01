@@ -1,0 +1,13 @@
+{
+  "id": "almond_pancakes",
+  "name": "Almond Flour Pancakes",
+  "meal": "breakfast",
+  "servings": 1,
+  "prep_minutes": 15,
+  "ingredients": [
+    { "item": "almond_flour", "qty_g": 60, "category": "other" },
+    { "item": "eggs", "qty_g": 100, "category": "protein", "note": "2 large" },
+    { "item": "cream_cheese", "qty_g": 30, "category": "dairy" },
+    { "item": "butter", "qty_g": 15, "category": "fats_oils", "note": "for cooking" }
+  ]
+}

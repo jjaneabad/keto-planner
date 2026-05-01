@@ -1,0 +1,13 @@
+{
+  "id": "broccoli_cheddar_egg_muffins",
+  "name": "Broccoli Cheddar Egg Muffins",
+  "meal": "breakfast",
+  "servings": 1,
+  "prep_minutes": 25,
+  "ingredients": [
+    { "item": "eggs", "qty_g": 150, "category": "protein", "note": "3 large" },
+    { "item": "broccoli", "qty_g": 60, "category": "vegetable", "note": "finely chopped" },
+    { "item": "cheddar", "qty_g": 40, "category": "dairy", "note": "grated" },
+    { "item": "heavy_cream", "qty_g": 20, "category": "dairy" }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "eggs_bacon_avocado",
+  "name": "Eggs, Bacon & Avocado Plate",
+  "meal": "breakfast",
+  "servings": 1,
+  "prep_minutes": 15,
+  "ingredients": [
+    { "item": "eggs", "qty_g": 150, "category": "protein", "note": "3 large" },
+    { "item": "bacon", "qty_g": 60, "category": "protein", "note": "3 slices" },
+    { "item": "avocado", "qty_g": 80, "category": "vegetable", "note": "half medium" }
+  ]
+}

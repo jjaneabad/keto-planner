@@ -1,0 +1,13 @@
+{
+  "id": "pork_chop_green_beans",
+  "name": "Pork Chop with Buttered Green Beans",
+  "meal": "dinner",
+  "servings": 1,
+  "prep_minutes": 20,
+  "ingredients": [
+    { "item": "pork_chop", "qty_g": 200, "category": "protein" },
+    { "item": "green_beans", "qty_g": 150, "category": "vegetable" },
+    { "item": "butter", "qty_g": 20, "category": "fats_oils" },
+    { "item": "garlic", "qty_g": 5, "category": "vegetable", "note": "1 clove" }
+  ]
+}

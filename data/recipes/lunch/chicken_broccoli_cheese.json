@@ -1,0 +1,13 @@
+{
+  "id": "chicken_broccoli_cheese",
+  "name": "Chicken Broccoli Cheese Bowl",
+  "meal": "lunch",
+  "servings": 1,
+  "prep_minutes": 15,
+  "ingredients": [
+    { "item": "chicken_breast", "qty_g": 150, "category": "protein", "note": "cooked, diced" },
+    { "item": "broccoli", "qty_g": 100, "category": "vegetable", "note": "steamed" },
+    { "item": "cheddar", "qty_g": 40, "category": "dairy", "note": "melted on top" },
+    { "item": "butter", "qty_g": 15, "category": "fats_oils" }
+  ]
+}

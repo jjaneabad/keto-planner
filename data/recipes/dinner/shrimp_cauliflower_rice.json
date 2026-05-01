@@ -1,0 +1,14 @@
+{
+  "id": "shrimp_cauliflower_rice",
+  "name": "Shrimp Cauliflower Fried Rice",
+  "meal": "dinner",
+  "servings": 1,
+  "prep_minutes": 15,
+  "ingredients": [
+    { "item": "shrimp", "qty_g": 150, "category": "protein" },
+    { "item": "cauliflower", "qty_g": 200, "category": "vegetable", "note": "riced" },
+    { "item": "eggs", "qty_g": 50, "category": "protein", "note": "1 large, scrambled in" },
+    { "item": "olive_oil", "qty_g": 15, "category": "fats_oils" },
+    { "item": "onion", "qty_g": 20, "category": "vegetable", "note": "diced" }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "greek_salad_feta",
+  "name": "Greek Salad with Feta",
+  "meal": "lunch",
+  "servings": 1,
+  "prep_minutes": 10,
+  "ingredients": [
+    { "item": "cucumber", "qty_g": 100, "category": "vegetable" },
+    { "item": "tomato", "qty_g": 80, "category": "vegetable" },
+    { "item": "feta", "qty_g": 60, "category": "dairy", "note": "crumbled" },
+    { "item": "olives_black", "qty_g": 30, "category": "vegetable" },
+    { "item": "olive_oil", "qty_g": 20, "category": "fats_oils" },
+    { "item": "onion", "qty_g": 20, "category": "vegetable", "note": "red, sliced thin" }
+  ]
+}

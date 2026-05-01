@@ -1,0 +1,14 @@
+{
+  "id": "bacon_cheeseburger_bowl",
+  "name": "Bacon Cheeseburger Bowl",
+  "meal": "lunch",
+  "servings": 1,
+  "prep_minutes": 15,
+  "ingredients": [
+    { "item": "ground_beef", "qty_g": 150, "category": "protein" },
+    { "item": "bacon", "qty_g": 40, "category": "protein", "note": "2 slices, crumbled" },
+    { "item": "cheddar", "qty_g": 30, "category": "dairy" },
+    { "item": "lettuce_romaine", "qty_g": 60, "category": "vegetable", "note": "shredded" },
+    { "item": "mustard_dijon", "qty_g": 10, "category": "other" }
+  ]
+}

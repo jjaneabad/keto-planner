@@ -1,0 +1,13 @@
+{
+  "id": "spinach_cheese_omelette",
+  "name": "Spinach & Cheese Omelette",
+  "meal": "breakfast",
+  "servings": 1,
+  "prep_minutes": 10,
+  "ingredients": [
+    { "item": "eggs", "qty_g": 150, "category": "protein", "note": "3 large" },
+    { "item": "spinach", "qty_g": 60, "category": "vegetable" },
+    { "item": "cheddar", "qty_g": 30, "category": "dairy", "note": "grated" },
+    { "item": "butter", "qty_g": 15, "category": "fats_oils" }
+  ]
+}

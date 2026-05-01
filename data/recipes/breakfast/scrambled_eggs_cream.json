@@ -1,0 +1,12 @@
+{
+  "id": "scrambled_eggs_cream",
+  "name": "Buttery Scrambled Eggs with Cream",
+  "meal": "breakfast",
+  "servings": 1,
+  "prep_minutes": 8,
+  "ingredients": [
+    { "item": "eggs", "qty_g": 200, "category": "protein", "note": "4 large" },
+    { "item": "butter", "qty_g": 20, "category": "fats_oils" },
+    { "item": "heavy_cream", "qty_g": 30, "category": "dairy" }
+  ]
+}

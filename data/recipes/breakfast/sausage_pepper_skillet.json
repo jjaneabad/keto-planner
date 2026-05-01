@@ -1,0 +1,13 @@
+{
+  "id": "sausage_pepper_skillet",
+  "name": "Sausage & Bell Pepper Skillet",
+  "meal": "breakfast",
+  "servings": 1,
+  "prep_minutes": 15,
+  "ingredients": [
+    { "item": "pork_sausage", "qty_g": 120, "category": "protein" },
+    { "item": "bell_pepper", "qty_g": 80, "category": "vegetable", "note": "diced" },
+    { "item": "olive_oil", "qty_g": 10, "category": "fats_oils" },
+    { "item": "eggs", "qty_g": 100, "category": "protein", "note": "2 large, on top" }
+  ]
+}

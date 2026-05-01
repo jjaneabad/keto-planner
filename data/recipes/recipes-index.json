@@ -1,0 +1,5 @@
+{
+  "breakfast": ["almond_pancakes", "bacon_mushroom_scramble", "baked_avocado_eggs", "broccoli_cheddar_egg_muffins", "chia_coconut_pudding", "eggs_bacon_avocado", "salmon_cream_cheese_rolls", "sausage_pepper_skillet", "scrambled_eggs_cream", "spinach_cheese_omelette"],
+  "lunch": ["bacon_cheeseburger_bowl", "cauliflower_cheese_soup", "chicken_broccoli_cheese", "chicken_caesar_wraps", "egg_salad_lettuce_cups", "garlic_butter_shrimp_zucchini", "greek_salad_feta", "salmon_arugula_salad", "tuna_avocado_salad", "turkey_avocado_lettuce_roll"],
+  "dinner": ["chicken_thigh_creamed_spinach", "cod_tomato_olives", "garlic_chicken_zucchini", "ground_beef_cabbage_stirfry", "lamb_brussels_sprouts", "pork_chop_green_beans", "salmon_asparagus_butter", "sausage_kale_soup", "shrimp_cauliflower_rice", "steak_mushroom_cream"]
+}

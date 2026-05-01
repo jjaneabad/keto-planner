@@ -1,0 +1,13 @@
+{
+  "id": "bacon_mushroom_scramble",
+  "name": "Bacon & Mushroom Scramble",
+  "meal": "breakfast",
+  "servings": 1,
+  "prep_minutes": 12,
+  "ingredients": [
+    { "item": "eggs", "qty_g": 150, "category": "protein", "note": "3 large" },
+    { "item": "bacon", "qty_g": 40, "category": "protein", "note": "2 slices" },
+    { "item": "mushrooms", "qty_g": 80, "category": "vegetable", "note": "sliced" },
+    { "item": "butter", "qty_g": 10, "category": "fats_oils" }
+  ]
+}

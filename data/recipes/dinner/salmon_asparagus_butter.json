@@ -1,0 +1,13 @@
+{
+  "id": "salmon_asparagus_butter",
+  "name": "Salmon with Asparagus & Butter",
+  "meal": "dinner",
+  "servings": 1,
+  "prep_minutes": 20,
+  "ingredients": [
+    { "item": "salmon", "qty_g": 180, "category": "protein", "note": "fillet" },
+    { "item": "asparagus", "qty_g": 150, "category": "vegetable" },
+    { "item": "butter", "qty_g": 20, "category": "fats_oils" },
+    { "item": "lemon_juice", "qty_g": 10, "category": "other" }
+  ]
+}

@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Keto">
+<meta name="theme-color" content="#3d8a57">
+<title>Keto Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+
+<style>
+/* ── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          oklch(97% 0.008 60);
+  --bg-card:     oklch(100% 0 0);
+  --bg-subtle:   oklch(95% 0.008 60);
+  --fg:          oklch(18% 0.02 60);
+  --fg-2:        oklch(42% 0.02 60);
+  --fg-3:        oklch(62% 0.015 60);
+  --border:      oklch(88% 0.01 60);
+  --green:       oklch(52% 0.15 145);
+  --green-light: oklch(94% 0.06 145);
+  --green-mid:   oklch(82% 0.1 145);
+  --amber:       oklch(68% 0.15 75);
+  --amber-light: oklch(94% 0.06 75);
+  --red:         oklch(52% 0.18 25);
+  --red-light:   oklch(94% 0.07 25);
+  --blue:        oklch(56% 0.15 240);
+  --tab-h:       64px;
+  --safe-b:      env(safe-area-inset-bottom, 0px);
+  --radius:      14px;
+  --radius-sm:   8px;
+  --shadow:      0 1px 4px oklch(0% 0 0 / 0.06), 0 4px 16px oklch(0% 0 0 / 0.06);
+  --shadow-lg:   0 4px 32px oklch(0% 0 0 / 0.14);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── Tab bar ─────────────────────────────────────────── */
+#tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: calc(var(--tab-h) + var(--safe-b));
+  padding-bottom: var(--safe-b);
+  background: oklch(100% 0 0 / 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 100;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--fg-3);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+}
+.tab-btn.active { color: var(--green); }
+.tab-btn svg { width: 22px; height: 22px; }
+
+/* ── Scroll area ─────────────────────────────────────── */
+#scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding-bottom: calc(var(--tab-h) + var(--safe-b) + 16px);
+  height: 100dvh;
+}
+
+/* ── Tabs ─────────────────────────────────────────────── */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Page header ─────────────────────────────────────── */
+.page-header {
+  padding: 56px 20px 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+.page-header .subtitle {
+  font-size: 14px;
+  color: var(--fg-2);
+  margin-top: 3px;
+}
+.icon-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  -webkit-tap-highlight-color: transparent;
+}
+.icon-btn svg { width: 18px; height: 18px; color: var(--fg-2); }
+
+/* ── Cards ───────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin: 0 16px 12px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-body { padding: 0 18px 16px; }
+
+/* ── Collapsible ─────────────────────────────────────── */
+.collapsible-header {
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.collapsible-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.collapsible-header .chev {
+  color: var(--fg-3);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.collapsible-header.open .chev { transform: rotate(180deg); }
+.collapsible-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.collapsible-body.open { max-height: 4000px; }
+.collapsible-body-inner { padding: 0 18px 18px; }
+
+/* ── Learn Tab ───────────────────────────────────────── */
+.eat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+.eat-col {
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+.eat-col.yes { background: var(--green-light); }
+.eat-col.no  { background: var(--red-light); }
+.eat-col h3 {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.eat-col.yes h3 { color: var(--green); }
+.eat-col.no  h3 { color: var(--red); }
+.eat-col ul { list-style: none; }
+.eat-col li { font-size: 13px; color: var(--fg); padding: 2px 0; }
+.eat-col li::before { content: '·  '; color: var(--fg-3); }
+
+.prose { font-size: 14px; line-height: 1.6; color: var(--fg-2); }
+.prose + .prose { margin-top: 10px; }
+.prose strong { color: var(--fg); font-weight: 600; }
+
+.research-item { margin-bottom: 16px; }
+.research-item:last-child { margin-bottom: 0; }
+.research-item h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.research-item p { font-size: 13px; color: var(--fg-2); line-height: 1.55; }
+
+.myth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+.myth-col { border-radius: var(--radius-sm); padding: 10px 12px; }
+.myth-col.myth { background: var(--red-light); }
+.myth-col.fact { background: var(--green-light); }
+.myth-col h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 4px; }
+.myth-col.myth h4 { color: var(--red); }
+.myth-col.fact h4 { color: var(--green); }
+.myth-col p { font-size: 12px; color: var(--fg); line-height: 1.5; }
+
+.timeline-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.timeline-item:last-child { margin-bottom: 0; }
+.timeline-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green-light);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.timeline-content h4 { font-size: 13px; font-weight: 600; }
+.timeline-content p  { font-size: 12px; color: var(--fg-2); margin-top: 2px; line-height: 1.5; }
+
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--green-light);
+  color: var(--green);
+}
+
+/* ── Plan Tab ────────────────────────────────────────── */
+.plan-actions {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 12px;
+  flex-wrap: wrap;
+}
+.btn {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.btn:active { opacity: 0.75; transform: scale(0.97); }
+.btn-primary { background: var(--green); color: #fff; }
+.btn-outline {
+  background: var(--bg-card);
+  color: var(--fg);
+  border: 1.5px solid var(--border);
+}
+.btn-ghost { background: transparent; color: var(--green); padding: 8px 0; }
+.btn-amber { background: var(--amber); color: #fff; }
+.btn-sm {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+/* Day strip */
+.day-strip {
+  display: flex;
+  gap: 6px;
+  padding: 4px 16px 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.day-strip::-webkit-scrollbar { display: none; }
+.day-pill {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  color: var(--fg-2);
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.15s;
+}
+.day-pill.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+/* Meal grid */
+.meal-grid { padding: 0 16px; }
+.meal-type-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+.meal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.meal-card-header {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  gap: 10px;
+}
+.meal-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.meal-macros {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.macro-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.macro-fat   { background: oklch(95% 0.05 60);  color: oklch(40% 0.1 60); }
+.macro-pro   { background: oklch(93% 0.06 240); color: oklch(38% 0.12 240); }
+.macro-carb  { background: var(--green-light); color: var(--green); }
+
+/* Meal detail expand */
+.meal-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.meal-detail.open { max-height: 800px; }
+.meal-detail-inner { padding: 0 16px 16px; border-top: 1px solid var(--bg-subtle); }
+.ingredient-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--bg-subtle);
+  font-size: 13px;
+}
+.ingredient-row:last-child { border-bottom: none; }
+.ingredient-name { color: var(--fg-2); }
+.ingredient-qty  { color: var(--fg-3); font-size: 12px; }
+.detail-macros {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+  flex-wrap: wrap;
+}
+.detail-macro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-width: 48px;
+}
+.detail-macro .val { font-size: 16px; font-weight: 700; }
+.detail-macro .lbl { font-size: 10px; font-weight: 500; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.detail-meta { font-size: 12px; color: var(--fg-3); margin-top: 10px; }
+.swap-row { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+
+/* Week summary bar */
+.week-summary {
+  margin: 0 16px 12px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.week-summary h3 { font-size: 13px; font-weight: 600; color: var(--fg-2); margin-bottom: 10px; }
+.week-bars { display: flex; flex-direction: column; gap: 7px; }
+.week-bar-row { display: flex; align-items: center; gap: 10px; }
+.week-bar-label { font-size: 12px; color: var(--fg-3); width: 60px; flex-shrink: 0; }
+.week-bar-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-subtle);
+  overflow: hidden;
+}
+.week-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+.week-bar-val { font-size: 12px; font-weight: 600; color: var(--fg-2); width: 50px; text-align: right; flex-shrink: 0; }
+
+/* ── Today Tab ───────────────────────────────────────── */
+.today-date {
+  font-size: 13px;
+  color: var(--fg-3);
+  padding: 0 20px 16px;
+}
+.today-macro-ring {
+  margin: 0 16px 12px;
+  padding: 18px 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.today-macro-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.ring-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+.ring-wrap svg { width: 72px; height: 72px; transform: rotate(-90deg); }
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.ring-kcal { font-size: 14px; font-weight: 700; }
+.ring-sub  { font-size: 9px; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.05em; }
+.today-macro-list { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.tmacro-row { display: flex; align-items: center; gap: 8px; }
+.tmacro-name { font-size: 12px; color: var(--fg-3); width: 70px; flex-shrink: 0; }
+.tmacro-bar-track { flex: 1; height: 7px; border-radius: 4px; background: var(--bg-subtle); overflow: hidden; }
+.tmacro-bar-fill  { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.tmacro-val { font-size: 12px; font-weight: 600; color: var(--fg); width: 42px; text-align: right; flex-shrink: 0; }
+
+.today-meal-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  padding: 6px 20px 6px;
+}
+.today-meal-card {
+  margin: 0 16px 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.today-meal-main {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.today-meal-info { flex: 1; min-width: 0; }
+.today-meal-name { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.today-meal-macros { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+.today-meal-swap-btn {
+  background: var(--bg-subtle);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.alt-options {
+  border-top: 1px solid var(--bg-subtle);
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.alt-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+  gap: 8px;
+}
+.alt-option:active { background: var(--green-light); }
+.alt-option-name { font-size: 13px; color: var(--fg); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.alt-option-macros { display: flex; gap: 5px; flex-shrink: 0; }
+
+/* ── Modal / Overlay ─────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.overlay.open { pointer-events: auto; opacity: 1; }
+.overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: oklch(0% 0 0 / 0.4);
+  backdrop-filter: blur(2px);
+}
+.overlay-sheet {
+  position: relative;
+  background: var(--bg);
+  border-radius: 20px 20px 0 0;
+  max-height: 90dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  padding-bottom: calc(24px + var(--safe-b));
+}
+.overlay.open .overlay-sheet { transform: translateY(0); }
+.sheet-handle {
+  width: 36px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 12px auto 4px;
+}
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px 16px;
+}
+.sheet-header h2 { font-size: 18px; font-weight: 700; }
+.close-btn {
+  background: var(--bg-subtle);
+  border: none;
+  border-radius: 50%;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--fg-2);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Shopping list */
+.shop-category { margin-bottom: 20px; }
+.shop-category-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  padding: 0 20px 8px;
+}
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+.shop-item:last-child { border-bottom: none; }
+.shop-item.checked { background: var(--bg-subtle); }
+.shop-item.checked .shop-item-name { text-decoration: line-through; color: var(--fg-3); }
+.shop-checkbox {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.shop-item.checked .shop-checkbox {
+  background: var(--green);
+  border-color: var(--green);
+}
+.shop-checkbox svg { display: none; color: #fff; width: 13px; height: 13px; }
+.shop-item.checked .shop-checkbox svg { display: block; }
+.shop-item-name { font-size: 15px; flex: 1; }
+.shop-item-qty  { font-size: 13px; color: var(--fg-3); flex-shrink: 0; }
+
+/* Swap picker */
+.swap-list { padding: 0 16px; }
+.swap-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 16px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+  margin-bottom: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+.swap-option:active { background: var(--green-light); }
+.swap-option.current { border: 2px solid var(--green); background: var(--green-light); }
+.swap-option-name { font-size: 14px; font-weight: 600; flex: 1; }
+.swap-option-macros { display: flex; gap: 6px; flex-shrink: 0; }
+.swap-option-prep { font-size: 12px; color: var(--fg-3); margin-top: 2px; }
+
+/* Settings */
+.settings-section { padding: 16px 20px; }
+.settings-section h3 { font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 12px; }
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-label { font-size: 15px; font-weight: 500; }
+.setting-value { font-size: 13px; color: var(--fg-3); }
+.api-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  font-family: inherit;
+  font-size: 13px;
+  background: var(--bg-card);
+  color: var(--fg);
+  margin-top: 8px;
+  outline: none;
+}
+.api-input:focus { border-color: var(--green); }
+.api-status {
+  font-size: 12px;
+  color: var(--fg-3);
+  margin-top: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.api-status .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--fg-3);
+}
+.api-status .dot.active { background: var(--green); }
+
+/* AI generating */
+.ai-generating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--green-light);
+  border-radius: var(--radius);
+  margin: 0 16px 12px;
+  font-size: 14px;
+  color: var(--green);
+  font-weight: 500;
+}
+.spinner {
+  width: 18px; height: 18px;
+  border: 2.5px solid var(--green-mid);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 48px 32px;
+  color: var(--fg-3);
+}
+.empty-state p { font-size: 15px; margin-top: 8px; }
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 16px;
+}
+
+/* ── Utility ─────────────────────────────────────────── */
+.text-green { color: var(--green); }
+.text-amber { color: var(--amber); }
+.text-red   { color: var(--red); }
+.fw-600 { font-weight: 600; }
+.mt-4 { margin-top: 4px; }
+.mt-8 { margin-top: 8px; }
+.source-link { font-size: 11px; color: var(--fg-3); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── Target inputs ───────────────────────────────────── */
+.target-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.target-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.target-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.target-input {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fg);
+  background: var(--bg-card);
+  outline: none;
+  -webkit-appearance: none;
+  width: 100%;
+}
+.target-input:focus { border-color: var(--green); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCROLL AREA
+════════════════════════════════════════════════════════════ -->
+<div id="scroll-area">
+
+  <!-- ── LEARN TAB ──────────────────────────────────── -->
+  <div id="tab-learn" class="tab-panel active">
+    <div class="page-header">
+      <div>
+        <h1>Learn</h1>
+        <div class="subtitle">Science-backed keto guidance</div>
+      </div>
+    </div>
+
+    <!-- Overview -->
+    <div class="card">
+      <div class="collapsible-header open" onclick="toggleCollapsible(this)">
+        <h2><span>Overview</span></h2>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="collapsible-body open">
+        <div class="collapsible-body-inner">
+          <p class="prose">
+            <strong>What is ketosis?</strong> Ketosis is a metabolic state where your body burns fat as its primary fuel instead of carbohydrates. When you restrict carbs below ~20g net per day, your liver converts fatty acids into ketones, which power your brain and muscles. This state makes stored body fat far more accessible as an energy source.
+          </p>
+          <p class="prose mt-8">
+            <strong>How keto burns fat.</strong> Without carbs, insulin stays low. Low insulin unlocks your fat cells, allowing fatty acids to flow into the bloodstream and liver. Your body becomes a fat-burning machine — drawing on both food fat and stored body fat throughout the day.
+          </p>
+          <div class="eat-grid mt-8">
+            <div class="eat-col yes">
+              <h3>Eat This</h3>
+              <ul>
+                <li>Meat &amp; poultry</li>
+                <li>Fish &amp; seafood</li>
+                <li>Eggs</li>
+                <li>Avocado</li>
+                <li>Leafy greens</li>
+                <li>Above-ground veg</li>
+                <li>Cheese &amp; cream</li>
+                <li>Olive oil &amp; butter</li>
+                <li>Nuts &amp; seeds</li>
+              </ul>
+            </div>
+            <div class="eat-col no">
+              <h3>Avoid This</h3>
+              <ul>
+                <li>Bread &amp; pasta</li>
+                <li>Rice &amp; grains</li>
+                <li>Sugar &amp; sweets</li>
+                <li>Fruit juice</li>
+                <li>Root vegetables</li>
+                <li>Beans &amp; legumes</li>
+                <li>Low-fat products</li>
+                <li>Alcohol (mostly)</li>
+                <li>Processed snacks</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keto & Lipedema -->
+    <div class="card">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <h2><span>Keto &amp; Lipedema</span> <span class="tag">PMC Study</span></h2>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <p class="prose">
+            <strong>What is lipedema?</strong> Lipedema is a chronic condition involving abnormal fat deposits — typically in the hips, thighs, and legs — that is resistant to standard dieting. It affects predominantly women and is often mistaken for regular obesity.
+          </p>
+          <p class="prose mt-8">
+            <strong>Why keto helps.</strong> A 2023 study (PMC10748777) found that ketogenic diets significantly reduced lipedema-related fat volume, pain, and inflammation in participants. Unlike calorie restriction, which often fails with lipedema, ketosis appears to target the inflammatory, hormone-sensitive fat characteristic of the condition.
+          </p>
+          <p class="prose mt-8">
+            <strong>Key findings from the study:</strong>
+          </p>
+          <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+            <div style="background:var(--green-light); border-radius:8px; padding:10px 14px;">
+              <div style="font-size:13px; font-weight:600; color:var(--green);">Reduced fat volume</div>
+              <div style="font-size:12px; color:var(--fg-2); margin-top:2px; line-height:1.5;">Measurable reduction in lipedema fat deposits over 8–12 weeks of strict keto</div>
+            </div>
+            <div style="background:var(--green-light); border-radius:8px; padding:10px 14px;">
+              <div style="font-size:13px; font-weight:600; color:var(--green);">Lower inflammation</div>
+              <div style="font-size:12px; color:var(--fg-2); margin-top:2px; line-height:1.5;">Ketones have direct anti-inflammatory effects, reducing the underlying driver of lipedema fat</div>
+            </div>
+            <div style="background:var(--green-light); border-radius:8px; padding:10px 14px;">
+              <div style="font-size:13px; font-weight:600; color:var(--green);">Less pain &amp; sensitivity</div>
+              <div style="font-size:12px; color:var(--fg-2); margin-top:2px; line-height:1.5;">Participants reported reduced tenderness and improved quality of life</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <a class="source-link" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10748777/" target="_blank">PMC10748777 — Full study at PubMed Central</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Research & Timelines -->
+    <div class="card">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <h2>Research &amp; Timelines</h2>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <div class="timeline-item">
+            <div class="timeline-dot">1–3</div>
+            <div class="timeline-content">
+              <h4>Days 1–3: Carb depletion</h4>
+              <p>Glycogen stores deplete. You may feel tired, foggy, or irritable — the "keto flu." Water and electrolytes drop significantly. Drink more, add salt.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">1w</div>
+            <div class="timeline-content">
+              <h4>Week 1: Ketosis begins</h4>
+              <p>Blood ketones rise above 0.5 mmol/L. Energy stabilises. Rapid weight drop is mostly water loss — expected and healthy.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">2–4</div>
+            <div class="timeline-content">
+              <h4>Weeks 2–4: Fat adaptation starts</h4>
+              <p>Your muscles and brain begin preferring ketones. Mental clarity often improves. Appetite typically drops — this is normal and beneficial.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">6–8</div>
+            <div class="timeline-content">
+              <h4>Weeks 6–8: Body recomposition</h4>
+              <p>Measurable body fat loss visible. Inflammation markers drop. Energy is stable throughout the day without peaks and crashes.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">3m</div>
+            <div class="timeline-content">
+              <h4>3+ months: Deep fat adaptation</h4>
+              <p>Full fat adaptation achieved. Athletic performance returns or improves. Lipedema-specific fat begins responding if present.</p>
+            </div>
+          </div>
+          <div style="margin-top:4px;">
+            <p class="prose"><strong>Note:</strong> Track your measurements and photos — the scale doesn't capture everything. Fat loss and muscle gain can happen simultaneously, making weight a poor proxy for progress.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Myths vs Facts -->
+    <div class="card" style="margin-bottom:8px;">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <h2>Myths vs. Evidence</h2>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div>
+              <div class="myth-row">
+                <div class="myth-col myth"><h4>Myth</h4><p>Eating fat makes you fat</p></div>
+                <div class="myth-col fact"><h4>Evidence</h4><p>Dietary fat without carbs doesn't spike insulin — the main fat-storage hormone</p></div>
+              </div>
+            </div>
+            <div>
+              <div class="myth-row">
+                <div class="myth-col myth"><h4>Myth</h4><p>Keto destroys your kidneys</p></div>
+                <div class="myth-col fact"><h4>Evidence</h4><p>No evidence for healthy individuals. Higher protein helps preserve muscle during fat loss</p></div>
+              </div>
+            </div>
+            <div>
+              <div class="myth-row">
+                <div class="myth-col myth"><h4>Myth</h4><p>You need carbs for energy</p></div>
+                <div class="myth-col fact"><h4>Evidence</h4><p>The brain can run on ketones. Adapted keto athletes perform comparably in most sports</p></div>
+              </div>
+            </div>
+            <div>
+              <div class="myth-row">
+                <div class="myth-col myth"><h4>Myth</h4><p>Cholesterol will spike dangerously</p></div>
+                <div class="myth-col fact"><h4>Evidence</h4><p>HDL typically rises; triglycerides drop. LDL response varies — monitor with your doctor</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PLAN TAB ───────────────────────────────────── -->
+  <div id="tab-plan" class="tab-panel">
+    <div class="page-header">
+      <div>
+        <h1>Plan</h1>
+        <div class="subtitle">Weekly meal planner</div>
+      </div>
+      <button class="icon-btn" onclick="openSettings()" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+      </button>
+    </div>
+
+    <div class="plan-actions">
+      <button class="btn btn-primary" onclick="generateNewPlan()">Regenerate Plan</button>
+      <button class="btn btn-outline" id="shop-list-btn" onclick="openShoppingList()">Shopping List</button>
+    </div>
+    <div id="ai-gen-btn-wrap" style="display:none; padding:0 16px 8px;">
+      <button class="btn btn-amber" style="width:100%;" onclick="generateWithClaude()">Generate with Claude AI</button>
+    </div>
+    <div id="ai-generating" class="ai-generating" style="display:none;">
+      <div class="spinner"></div>
+      <span>Claude is building your personalised plan…</span>
+    </div>
+
+    <!-- Day selector -->
+    <div class="day-strip" id="day-strip"></div>
+
+    <!-- Meal grid for selected day -->
+    <div class="meal-grid" id="meal-grid"></div>
+
+    <!-- Weekly macro summary -->
+    <div class="week-summary" id="week-summary"></div>
+  </div>
+
+  <!-- ── TODAY TAB ──────────────────────────────────── -->
+  <div id="tab-today" class="tab-panel">
+    <div class="page-header">
+      <div>
+        <h1>Today</h1>
+      </div>
+    </div>
+    <div class="today-date" id="today-date"></div>
+    <div id="today-content"></div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB BAR
+════════════════════════════════════════════════════════════ -->
+<nav id="tab-bar">
+  <button class="tab-btn active" data-tab="learn" onclick="switchTab('learn')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    Learn
+  </button>
+  <button class="tab-btn" data-tab="plan" onclick="switchTab('plan')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Plan
+  </button>
+  <button class="tab-btn" data-tab="today" onclick="switchTab('today')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Today
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     OVERLAYS
+════════════════════════════════════════════════════════════ -->
+
+<!-- Shopping List -->
+<div id="overlay-shop" class="overlay" onclick="closeOnBackdrop(event,'overlay-shop')">
+  <div class="overlay-backdrop"></div>
+  <div class="overlay-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <h2>Shopping List</h2>
+      <button class="close-btn" onclick="closeOverlay('overlay-shop')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="shop-content"></div>
+  </div>
+</div>
+
+<!-- Swap Picker -->
+<div id="overlay-swap" class="overlay" onclick="closeOnBackdrop(event,'overlay-swap')">
+  <div class="overlay-backdrop"></div>
+  <div class="overlay-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <h2 id="swap-title">Swap Meal</h2>
+      <button class="close-btn" onclick="closeOverlay('overlay-swap')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="swap-list" id="swap-list"></div>
+  </div>
+</div>
+
+<!-- Settings -->
+<div id="overlay-settings" class="overlay" onclick="closeOnBackdrop(event,'overlay-settings')">
+  <div class="overlay-backdrop"></div>
+  <div class="overlay-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <h2>Settings</h2>
+      <button class="close-btn" onclick="closeOverlay('overlay-settings')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="settings-content"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════════
+// APP STATE
+// ══════════════════════════════════════════════════════════════
+let plan = null;
+let selectedDay = DAYS[0];
+let shoppingChecked = {};
+let apiKey = '';
+let expandedMeals = {};      // { "Mon-breakfast": true }
+let swapContext = null;      // { day, mealType }
+
+const LS_PLAN    = 'keto_plan_v2';
+const LS_SHOP    = 'keto_shop_v2';
+const LS_API     = 'keto_api_v1';
+
+const LS_TARGETS = 'keto_targets_v1';
+
+// ── Load from localStorage ────────────────────────────────────
+function loadState() {
+  try {
+    const p = localStorage.getItem(LS_PLAN);
+    if (p) plan = JSON.parse(p);
+  } catch(e) {}
+  try {
+    const s = localStorage.getItem(LS_SHOP);
+    if (s) shoppingChecked = JSON.parse(s);
+  } catch(e) {}
+  try {
+    const k = localStorage.getItem(LS_API);
+    if (k) apiKey = k;
+  } catch(e) {}
+  try {
+    const t = localStorage.getItem(LS_TARGETS);
+    if (t) Object.assign(KETO_TARGETS, JSON.parse(t));
+    // Always recompute calories from the formula — never trust stored value
+    KETO_TARGETS.calories = Math.round(KETO_TARGETS.fat * 9 + KETO_TARGETS.protein * 4 + KETO_TARGETS.net_carbs * 4);
+  } catch(e) {}
+}
+
+function saveState() {
+  try { localStorage.setItem(LS_PLAN, JSON.stringify(plan)); } catch(e) {}
+  try { localStorage.setItem(LS_SHOP, JSON.stringify(shoppingChecked)); } catch(e) {}
+}
+
+function saveTargets() {
+  try { localStorage.setItem(LS_TARGETS, JSON.stringify(KETO_TARGETS)); } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+  document.getElementById('scroll-area').scrollTop = 0;
+  if (tab === 'plan') renderPlan();
+  if (tab === 'today') renderToday();
+}
+
+// ══════════════════════════════════════════════════════════════
+// LEARN TAB — collapsibles
+// ══════════════════════════════════════════════════════════════
+function toggleCollapsible(header) {
+  const body = header.nextElementSibling;
+  const isOpen = header.classList.contains('open');
+  header.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+// ══════════════════════════════════════════════════════════════
+// PLAN TAB
+// ══════════════════════════════════════════════════════════════
+function generateNewPlan() {
+  plan = generatePlan();
+  shoppingChecked = {};
+  expandedMeals = {};
+  saveState();
+  renderPlan();
+  if (document.querySelector('[data-tab="today"]').classList.contains('active')) {
+    renderToday();
+  }
+}
+
+function renderPlan() {
+  if (!plan) {
+    plan = generatePlan();
+    saveState();
+  }
+  renderDayStrip();
+  renderMealGrid();
+  renderWeekSummary();
+  updateAiButton();
+}
+
+function renderDayStrip() {
+  const strip = document.getElementById('day-strip');
+  strip.innerHTML = DAYS.map(d => `
+    <button class="day-pill${d === selectedDay ? ' active' : ''}" onclick="selectDay('${d}')">
+      ${d}
+    </button>
+  `).join('');
+}
+
+function selectDay(day) {
+  selectedDay = day;
+  expandedMeals = {};
+  renderDayStrip();
+  renderMealGrid();
+}
+
+function renderMealGrid() {
+  const grid = document.getElementById('meal-grid');
+  if (!plan) { grid.innerHTML = ''; return; }
+  const dayPlan = plan[selectedDay];
+  const meals = ['breakfast', 'lunch', 'dinner'];
+  const mealLabel = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner' };
+
+  grid.innerHTML = meals.map(mealType => {
+    const recipe = dayPlan[mealType];
+    if (!recipe) return '';
+    const macros = computeMacros(recipe);
+    const key = selectedDay + '-' + mealType;
+    const isOpen = !!expandedMeals[key];
+    return `
+      <div class="meal-type-label">${mealLabel[mealType]}</div>
+      <div class="meal-card">
+        <div class="meal-card-header" onclick="toggleMealDetail('${key}')">
+          <div class="meal-card-name">${recipe.name}</div>
+          <div class="meal-macros">
+            <span class="macro-badge macro-fat">F ${macros.fat}g</span>
+            <span class="macro-badge macro-pro">P ${macros.protein}g</span>
+            <span class="macro-badge macro-carb">${macros.net_carbs}g carb</span>
+          </div>
+        </div>
+        <div class="meal-detail${isOpen ? ' open' : ''}" id="detail-${key}">
+          <div class="meal-detail-inner">
+            ${recipe.ingredients.map(ing => `
+              <div class="ingredient-row">
+                <div class="ingredient-name">${prettyIngredientName(ing.item)}${ing.note ? '<span style="color:var(--fg-3);font-size:11px;"> — ' + ing.note + '</span>' : ''}</div>
+                <div class="ingredient-qty">${ing.qty_g}g</div>
+              </div>
+            `).join('')}
+            <div class="detail-macros">
+              <div class="detail-macro"><div class="val text-amber">${macros.fat}g</div><div class="lbl">Fat</div></div>
+              <div class="detail-macro"><div class="val text-green">${macros.protein}g</div><div class="lbl">Protein</div></div>
+              <div class="detail-macro"><div class="val" style="color:var(--blue)">${macros.net_carbs}g</div><div class="lbl">Net Carbs</div></div>
+              <div class="detail-macro"><div class="val">${macros.calories}</div><div class="lbl">kcal</div></div>
+            </div>
+            <div class="detail-meta">Prep: ${recipe.prep_minutes} min${recipe._scale && recipe._scale !== 1 ? ` &nbsp;·&nbsp; Portion: ${recipe._scale}× base` : ''}</div>
+            <div class="swap-row">
+              <button class="btn btn-outline btn-sm" onclick="openSwap('${selectedDay}','${mealType}')">Swap meal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleMealDetail(key) {
+  expandedMeals[key] = !expandedMeals[key];
+  const el = document.getElementById('detail-' + key);
+  if (el) el.classList.toggle('open', !!expandedMeals[key]);
+}
+
+function renderWeekSummary() {
+  const summary = document.getElementById('week-summary');
+  if (!plan) { summary.innerHTML = ''; return; }
+  // Sum macros over the whole week
+  const totals = { fat: 0, protein: 0, net_carbs: 0, calories: 0 };
+  for (const day of DAYS) {
+    if (plan[day]) {
+      const d = computeDayMacros(plan[day]);
+      totals.fat       += d.fat;
+      totals.protein   += d.protein;
+      totals.net_carbs += d.net_carbs;
+      totals.calories  += d.calories;
+    }
+  }
+  const avgFat  = Math.round(totals.fat / 7);
+  const avgPro  = Math.round(totals.protein / 7);
+  const avgCarb = Math.round(totals.net_carbs / 7);
+  const avgCal  = Math.round(totals.calories / 7);
+
+  function barPct(val, target) { return Math.min(100, Math.round(val / target * 100)); }
+  function barColor(val, target, isCarb) {
+    if (isCarb) return val <= target ? 'var(--green)' : 'var(--red)';
+    const pct = val / target;
+    if (pct >= 0.7 && pct <= 1.3) return 'var(--green)';
+    if (pct >= 0.5 && pct <= 1.5) return 'var(--amber)';
+    return 'var(--red)';
+  }
+
+  summary.innerHTML = `
+    <h3>Weekly averages (per day)</h3>
+    <div class="week-bars">
+      <div class="week-bar-row">
+        <div class="week-bar-label">Fat</div>
+        <div class="week-bar-track"><div class="week-bar-fill" style="width:${barPct(avgFat,KETO_TARGETS.fat)}%;background:${barColor(avgFat,KETO_TARGETS.fat,false)}"></div></div>
+        <div class="week-bar-val">${avgFat}g</div>
+      </div>
+      <div class="week-bar-row">
+        <div class="week-bar-label">Protein</div>
+        <div class="week-bar-track"><div class="week-bar-fill" style="width:${barPct(avgPro,KETO_TARGETS.protein)}%;background:${barColor(avgPro,KETO_TARGETS.protein,false)}"></div></div>
+        <div class="week-bar-val">${avgPro}g</div>
+      </div>
+      <div class="week-bar-row">
+        <div class="week-bar-label">Net Carbs</div>
+        <div class="week-bar-track"><div class="week-bar-fill" style="width:${barPct(avgCarb,KETO_TARGETS.net_carbs)}%;background:${barColor(avgCarb,KETO_TARGETS.net_carbs,true)}"></div></div>
+        <div class="week-bar-val">${avgCarb}g</div>
+      </div>
+      <div class="week-bar-row">
+        <div class="week-bar-label">Calories</div>
+        <div class="week-bar-track"><div class="week-bar-fill" style="width:${barPct(avgCal,KETO_TARGETS.calories)}%;background:${barColor(avgCal,KETO_TARGETS.calories,false)}"></div></div>
+        <div class="week-bar-val">${avgCal} kcal</div>
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════════
+// SHOPPING LIST
+// ══════════════════════════════════════════════════════════════
+function openShoppingList() {
+  if (!plan) return;
+  const grouped = generateShoppingList(plan);
+  const content = document.getElementById('shop-content');
+  let html = '';
+  for (const cat of CATEGORY_ORDER) {
+    const items = grouped[cat];
+    if (!items || items.length === 0) continue;
+    html += `<div class="shop-category">
+      <div class="shop-category-title">${CATEGORY_LABELS[cat]}</div>`;
+    for (const item of items) {
+      const checked = !!shoppingChecked[item.item];
+      html += `
+        <div class="shop-item${checked ? ' checked' : ''}" onclick="toggleShopItem('${item.item}')">
+          <div class="shop-checkbox">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="shop-item-name">${prettyIngredientName(item.item)}</div>
+          <div class="shop-item-qty">${Math.round(item.qty_g)}g</div>
+        </div>`;
+    }
+    html += '</div>';
+  }
+  content.innerHTML = html;
+  openOverlay('overlay-shop');
+}
+
+function toggleShopItem(key) {
+  shoppingChecked[key] = !shoppingChecked[key];
+  saveState();
+  const items = document.querySelectorAll('.shop-item');
+  items.forEach(el => {
+    if (el.onclick && el.onclick.toString().includes(key)) {
+      el.classList.toggle('checked', !!shoppingChecked[key]);
+    }
+  });
+  // Re-render to update properly
+  openShoppingList();
+  openOverlay('overlay-shop'); // keep open
+}
+
+// ══════════════════════════════════════════════════════════════
+// SWAP MEAL
+// ══════════════════════════════════════════════════════════════
+function openSwap(day, mealType) {
+  swapContext = { day, mealType };
+  const current = plan[day][mealType];
+  document.getElementById('swap-title').textContent = 'Swap ' + mealType.charAt(0).toUpperCase() + mealType.slice(1);
+  const options = RECIPES[mealType];
+  const list = document.getElementById('swap-list');
+  list.innerHTML = options.map(r => {
+    const m = computeMacros(r);
+    const isCurrent = r.id === current.id;
+    return `
+      <div class="swap-option${isCurrent ? ' current' : ''}" onclick="confirmSwap('${r.id}')">
+        <div>
+          <div class="swap-option-name">${r.name}</div>
+          <div class="swap-option-prep">${r.prep_minutes} min</div>
+        </div>
+        <div class="swap-option-macros">
+          <span class="macro-badge macro-fat">F${m.fat}</span>
+          <span class="macro-badge macro-pro">P${m.protein}</span>
+          <span class="macro-badge macro-carb">${m.net_carbs}c</span>
+        </div>
+      </div>`;
+  }).join('');
+  openOverlay('overlay-swap');
+}
+
+function confirmSwap(recipeId) {
+  if (!swapContext || !plan) return;
+  const { day, mealType } = swapContext;
+  const recipe = RECIPES[mealType].find(r => r.id === recipeId);
+  if (recipe) {
+    // Re-scale the swapped recipe to fit the day's calorie target for that meal slot
+    const perMealCal = KETO_TARGETS.calories / 3;
+    const raw = computeMacros(recipe);
+    const factor = raw.calories > 0 ? perMealCal / raw.calories : 1;
+    plan[day][mealType] = scaleRecipe(recipe, factor);
+    saveState();
+  }
+  closeOverlay('overlay-swap');
+  renderMealGrid();
+  renderWeekSummary();
+}
+
+// ══════════════════════════════════════════════════════════════
+// TODAY TAB
+// ══════════════════════════════════════════════════════════════
+function renderToday() {
+  if (!plan) {
+    plan = generatePlan();
+    saveState();
+  }
+  // Determine today's day abbreviation
+  const jsDay = new Date().getDay(); // 0=Sun
+  const dayMap = [6, 0, 1, 2, 3, 4, 5]; // Sun→6,Mon→0,...
+  const todayIdx = dayMap[jsDay];
+  const todayKey = DAYS[todayIdx];
+  const dayPlan = plan[todayKey];
+
+  // Date string
+  const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  document.getElementById('today-date').textContent = dateStr;
+
+  const dayMacros = computeDayMacros(dayPlan);
+
+  // Build ring SVG
+  const caloriesPct = Math.min(1, dayMacros.calories / KETO_TARGETS.calories);
+  const r = 28, cx = 36, cy = 36;
+  const circ = 2 * Math.PI * r;
+  const dash = circ * caloriesPct;
+
+  function macroColor(val, target, isCarb) {
+    if (isCarb) return val <= target ? 'var(--green)' : 'var(--red)';
+    const p = val / target;
+    return p >= 0.6 && p <= 1.4 ? 'var(--green)' : p >= 0.4 ? 'var(--amber)' : 'var(--red)';
+  }
+
+  function pct(val, target) { return Math.min(100, Math.round(val / target * 100)); }
+
+  const macroRows = [
+    { label: 'Fat', val: dayMacros.fat, target: KETO_TARGETS.fat, isCarb: false },
+    { label: 'Protein', val: dayMacros.protein, target: KETO_TARGETS.protein, isCarb: false },
+    { label: 'Net Carbs', val: dayMacros.net_carbs, target: KETO_TARGETS.net_carbs, isCarb: true },
+  ];
+
+  let html = `
+    <div class="today-macro-ring">
+      <div class="today-macro-top">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 72 72">
+            <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--bg-subtle)" stroke-width="7"/>
+            <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--green)" stroke-width="7"
+              stroke-dasharray="${dash} ${circ}" stroke-linecap="round"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-kcal">${dayMacros.calories}</div>
+            <div class="ring-sub">kcal</div>
+          </div>
+        </div>
+        <div class="today-macro-list">
+          ${macroRows.map(m => `
+            <div class="tmacro-row">
+              <div class="tmacro-name">${m.label}</div>
+              <div class="tmacro-bar-track">
+                <div class="tmacro-bar-fill" style="width:${pct(m.val,m.target)}%;background:${macroColor(m.val,m.target,m.isCarb)}"></div>
+              </div>
+              <div class="tmacro-val">${m.val}g</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div style="margin-top:10px; font-size:12px; color:var(--fg-3); display:flex; gap:16px;">
+        <span>Target fat: ${KETO_TARGETS.fat}g</span>
+        <span>Protein: ${KETO_TARGETS.protein}g</span>
+        <span>Carbs: ≤${KETO_TARGETS.net_carbs}g</span>
+      </div>
+    </div>`;
+
+  for (const mealType of ['breakfast', 'lunch', 'dinner']) {
+    const recipe = dayPlan[mealType];
+    const macros = computeMacros(recipe);
+    const alts = RECIPES[mealType].filter(r => r.id !== recipe.id).slice(0, 3);
+    const mLabel = mealType.charAt(0).toUpperCase() + mealType.slice(1);
+    html += `
+      <div class="today-meal-label">${mLabel}</div>
+      <div class="today-meal-card">
+        <div class="today-meal-main">
+          <div class="today-meal-info">
+            <div class="today-meal-name">${recipe.name}</div>
+            <div class="today-meal-macros">
+              <span class="macro-badge macro-fat">F ${macros.fat}g</span>
+              <span class="macro-badge macro-pro">P ${macros.protein}g</span>
+              <span class="macro-badge macro-carb">${macros.net_carbs}g</span>
+              <span class="macro-badge" style="background:var(--bg-subtle);color:var(--fg-3);">${macros.calories} kcal</span>
+            </div>
+          </div>
+          <button class="today-meal-swap-btn" onclick="openTodaySwap('${todayKey}','${mealType}')">Swap</button>
+        </div>
+        <div class="alt-options">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--fg-3);margin-bottom:4px;">Quick alternatives</div>
+          ${alts.map(alt => {
+            const am = computeMacros(alt);
+            return `
+              <div class="alt-option" onclick="swapTodayMeal('${todayKey}','${mealType}','${alt.id}')">
+                <div class="alt-option-name">${alt.name}</div>
+                <div class="alt-option-macros">
+                  <span class="macro-badge macro-fat" style="font-size:10px;">F${am.fat}</span>
+                  <span class="macro-badge macro-carb" style="font-size:10px;">${am.net_carbs}c</span>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('today-content').innerHTML = html;
+}
+
+function openTodaySwap(day, mealType) {
+  openSwap(day, mealType);
+  // After swap, re-render today
+  const origConfirm = window.confirmSwap;
+  window._todaySwapDay = day;
+  window._todaySwapMeal = mealType;
+}
+
+function swapTodayMeal(day, mealType, recipeId) {
+  const recipe = RECIPES[mealType].find(r => r.id === recipeId);
+  if (recipe && plan) {
+    const perMealCal = KETO_TARGETS.calories / 3;
+    const raw = computeMacros(recipe);
+    const factor = raw.calories > 0 ? perMealCal / raw.calories : 1;
+    plan[day][mealType] = scaleRecipe(recipe, factor);
+    saveState();
+    renderToday();
+  }
+}
+
+// Override confirmSwap to also update today if we came from today tab
+const _origConfirmSwap = window.confirmSwap;
+
+// ══════════════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════════════
+function openSettings() {
+  renderSettings();
+  setTimeout(updateMacroCalc, 0);
+  openOverlay('overlay-settings');
+}
+
+function renderSettings() {
+  const hasKey = !!apiKey;
+  document.getElementById('settings-content').innerHTML = `
+    <div class="settings-section">
+      <h3>Claude AI Integration</h3>
+      <div style="margin-bottom:4px;">
+        <div class="setting-label">Anthropic API Key</div>
+        <input class="api-input" type="password" id="api-key-input" value="${apiKey}" placeholder="sk-ant-…" autocomplete="off">
+        <div class="api-status">
+          <div class="dot${hasKey ? ' active' : ''}"></div>
+          ${hasKey ? 'API key configured — Claude AI plan generation enabled' : 'No key — app works offline with built-in recipes'}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn btn-primary btn-sm" onclick="saveApiKey()">Save Key</button>
+        ${hasKey ? '<button class="btn btn-outline btn-sm" onclick="clearApiKey()">Remove Key</button>' : ''}
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="settings-section">
+      <h3>Backup &amp; Restore</h3>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Export Plan</div>
+          <div class="setting-value">Download as JSON</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="exportPlan()">Export</button>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Import Plan</div>
+          <div class="setting-value">Restore from JSON</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="triggerImport()">Import</button>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importPlan(event)">
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="settings-section">
+      <h3>Daily Macro Targets</h3>
+      <p style="font-size:12px;color:var(--fg-3);margin-bottom:14px;line-height:1.5;">Set grams of fat, protein and carbs. Calories and % composition update automatically.</p>
+
+      <!-- 3 inputs -->
+      <div class="target-grid" style="margin-bottom:16px;">
+        <div class="target-field">
+          <label class="target-label" for="t-fat">Fat (g)</label>
+          <input class="target-input" type="number" id="t-fat" min="20" max="400" step="5" value="${KETO_TARGETS.fat}" oninput="updateMacroCalc()">
+        </div>
+        <div class="target-field">
+          <label class="target-label" for="t-protein">Protein (g)</label>
+          <input class="target-input" type="number" id="t-protein" min="20" max="400" step="5" value="${KETO_TARGETS.protein}" oninput="updateMacroCalc()">
+        </div>
+        <div class="target-field">
+          <label class="target-label" for="t-carbs">Net Carbs (g)</label>
+          <input class="target-input" type="number" id="t-carbs" min="5" max="150" step="1" value="${KETO_TARGETS.net_carbs}" oninput="updateMacroCalc()">
+        </div>
+      </div>
+
+      <!-- Live computed output -->
+      <div id="macro-calc-output" style="background:var(--bg-subtle);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px;">
+        <!-- filled by updateMacroCalc() -->
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="saveTargets_ui()">Save Targets</button>
+        <button class="btn btn-outline btn-sm" onclick="resetTargets()">Reset to Default</button>
+        <div id="targets-saved" style="display:none;font-size:12px;color:var(--green);font-weight:600;">Saved!</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="settings-section">
+      <h3>Add to Home Screen</h3>
+      <p style="font-size:13px;color:var(--fg-2);line-height:1.55;margin-bottom:12px;">Install Keto Planner on your iPhone for quick access from the home screen.</p>
+      <div style="background:var(--bg-subtle);border-radius:var(--radius-sm);padding:14px 16px;">
+        <div style="font-size:13px;color:var(--fg-2);line-height:1.7;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <div style="width:22px;height:22px;background:var(--green);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+            </div>
+            <span style="font-weight:600;color:var(--fg);">Safari on iPhone</span>
+          </div>
+          <ol style="margin-left:16px;display:flex;flex-direction:column;gap:4px;">
+            <li>Tap the <strong>Share</strong> button (box with arrow up) in Safari</li>
+            <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
+            <li>Tap <strong>Add</strong> — done!</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function saveApiKey() {
+  const input = document.getElementById('api-key-input');
+  if (!input) return;
+  apiKey = input.value.trim();
+  try { localStorage.setItem(LS_API, apiKey); } catch(e) {}
+  renderSettings();
+  updateAiButton();
+}
+
+function clearApiKey() {
+  apiKey = '';
+  try { localStorage.removeItem(LS_API); } catch(e) {}
+  renderSettings();
+  updateAiButton();
+}
+
+const DEFAULT_TARGETS = { fat: 130, protein: 100, net_carbs: 20, calories: 1700 };
+
+function calcKcal(fat, protein, net_carbs) {
+  return Math.round(fat * 9 + protein * 4 + net_carbs * 4);
+}
+
+function updateMacroCalc() {
+  const fat       = parseFloat(document.getElementById('t-fat')?.value)     || 0;
+  const protein   = parseFloat(document.getElementById('t-protein')?.value) || 0;
+  const net_carbs = parseFloat(document.getElementById('t-carbs')?.value)   || 0;
+  const kcal      = calcKcal(fat, protein, net_carbs);
+  const fatKcal   = fat * 9;
+  const proKcal   = protein * 4;
+  const carbKcal  = net_carbs * 4;
+  const fatPct    = kcal > 0 ? Math.round(fatKcal  / kcal * 100) : 0;
+  const proPct    = kcal > 0 ? Math.round(proKcal  / kcal * 100) : 0;
+  const carbPct   = kcal > 0 ? Math.round(carbKcal / kcal * 100) : 0;
+
+  const out = document.getElementById('macro-calc-output');
+  if (!out) return;
+
+  // Stacked bar
+  out.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div style="font-size:22px;font-weight:700;color:var(--fg);">${kcal} <span style="font-size:13px;font-weight:500;color:var(--fg-3);">kcal / day</span></div>
+    </div>
+    <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;margin-bottom:12px;gap:2px;">
+      <div style="flex:${fatPct};background:var(--amber);border-radius:5px 0 0 5px;transition:flex 0.3s;"></div>
+      <div style="flex:${proPct};background:var(--blue);transition:flex 0.3s;"></div>
+      <div style="flex:${carbPct};background:var(--green);border-radius:0 5px 5px 0;transition:flex 0.3s;"></div>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:10px;height:10px;border-radius:2px;background:var(--amber);flex-shrink:0;"></div>
+        <span style="font-size:12px;color:var(--fg-2);">Fat <strong>${fatPct}%</strong> · ${Math.round(fatKcal)} kcal</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:10px;height:10px;border-radius:2px;background:var(--blue);flex-shrink:0;"></div>
+        <span style="font-size:12px;color:var(--fg-2);">Protein <strong>${proPct}%</strong> · ${Math.round(proKcal)} kcal</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:10px;height:10px;border-radius:2px;background:var(--green);flex-shrink:0;"></div>
+        <span style="font-size:12px;color:var(--fg-2);">Carbs <strong>${carbPct}%</strong> · ${Math.round(carbKcal)} kcal</span>
+      </div>
+    </div>`;
+}
+
+function saveTargets_ui() {
+  const fat       = parseInt(document.getElementById('t-fat')?.value)     || KETO_TARGETS.fat;
+  const protein   = parseInt(document.getElementById('t-protein')?.value) || KETO_TARGETS.protein;
+  const net_carbs = parseInt(document.getElementById('t-carbs')?.value)   || KETO_TARGETS.net_carbs;
+  const calories  = calcKcal(fat, protein, net_carbs);
+  KETO_TARGETS.fat       = fat;
+  KETO_TARGETS.protein   = protein;
+  KETO_TARGETS.net_carbs = net_carbs;
+  KETO_TARGETS.calories  = calories;
+  saveTargets();
+  const msg = document.getElementById('targets-saved');
+  if (msg) { msg.style.display = 'inline'; setTimeout(() => { msg.style.display = 'none'; }, 2000); }
+  if (document.getElementById('tab-plan').classList.contains('active')) renderWeekSummary();
+  if (document.getElementById('tab-today').classList.contains('active')) renderToday();
+}
+
+function resetTargets() {
+  Object.assign(KETO_TARGETS, DEFAULT_TARGETS);
+  saveTargets();
+  renderSettings();
+  // Re-run calc display after render
+  setTimeout(updateMacroCalc, 0);
+  if (document.getElementById('tab-plan').classList.contains('active')) renderWeekSummary();
+  if (document.getElementById('tab-today').classList.contains('active')) renderToday();
+}
+
+function updateAiButton() {
+  document.getElementById('ai-gen-btn-wrap').style.display = apiKey ? 'block' : 'none';
+}
+
+function exportPlan() {
+  if (!plan) return;
+  const data = JSON.stringify({ plan, exported: new Date().toISOString() }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'keto-plan-' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function triggerImport() {
+  document.getElementById('import-file').click();
+}
+
+function importPlan(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.plan) {
+        plan = data.plan;
+        saveState();
+        closeOverlay('overlay-settings');
+        renderPlan();
+      } else {
+        alert('Invalid plan file.');
+      }
+    } catch(err) {
+      alert('Could not read file.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════════════════════════
+// CLAUDE AI PLAN GENERATION
+// ══════════════════════════════════════════════════════════════
+async function generateWithClaude() {
+  if (!apiKey) return;
+  const validKeys = Object.keys(NUTRITION_DB).join(', ');
+  const prompt = `You are a keto meal planning expert. Generate a 7-day ketogenic meal plan as a JSON object.
+
+The plan must follow this EXACT schema:
+{
+  "Mon": { "breakfast": <recipe>, "lunch": <recipe>, "dinner": <recipe> },
+  "Tue": { ... },
+  ...through "Sun"
+}
+
+Each recipe must follow this schema:
+{
+  "id": "unique_snake_case_id",
+  "name": "Human readable name",
+  "meal": "breakfast" | "lunch" | "dinner",
+  "servings": 1,
+  "prep_minutes": <integer>,
+  "ingredients": [
+    { "item": "<key from valid list>", "qty_g": <integer>, "category": "protein"|"vegetable"|"dairy"|"fats_oils"|"other", "note": "optional" }
+  ]
+}
+
+CRITICAL: Every ingredient "item" value MUST be one of these exact keys:
+${validKeys}
+
+Do NOT invent new ingredient keys. Only use keys from the list above.
+Ensure variety across the 7 days — don't repeat the same meal.
+Keep net carbs low (under 10g net carbs per meal ideally).
+Return ONLY the JSON object, no explanation.`;
+
+  document.getElementById('ai-generating').style.display = 'flex';
+  document.getElementById('ai-gen-btn-wrap').style.display = 'none';
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-calls': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4096,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!resp.ok) throw new Error('API error: ' + resp.status);
+    const data = await resp.json();
+    const text = data.content[0].text;
+
+    // Extract JSON
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('No JSON in response');
+    const generatedPlan = JSON.parse(match[0]);
+
+    // Validate structure
+    for (const day of DAYS) {
+      if (!generatedPlan[day]) throw new Error('Missing day: ' + day);
+      for (const mt of ['breakfast', 'lunch', 'dinner']) {
+        if (!generatedPlan[day][mt]) throw new Error('Missing ' + mt + ' for ' + day);
+        const r = generatedPlan[day][mt];
+        if (!r.ingredients) throw new Error('Missing ingredients');
+        for (const ing of r.ingredients) {
+          if (!NUTRITION_DB[ing.item]) {
+            ing.item = Object.keys(NUTRITION_DB)[0]; // fallback
+          }
+        }
+      }
+    }
+
+    plan = generatedPlan;
+    shoppingChecked = {};
+    saveState();
+    renderPlan();
+  } catch(err) {
+    alert('Claude AI error: ' + err.message + '\n\nCheck your API key and try again.');
+  } finally {
+    document.getElementById('ai-generating').style.display = 'none';
+    updateAiButton();
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// OVERLAY HELPERS
+// ══════════════════════════════════════════════════════════════
+function openOverlay(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeOverlay(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeOnBackdrop(event, id) {
+  if (event.target === document.getElementById(id) ||
+      event.target.classList.contains('overlay-backdrop')) {
+    closeOverlay(id);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+loadState();
+if (!plan) {
+  plan = generatePlan();
+  saveState();
+}
+updateAiButton();
+
+// ── PWA Manifest (injected inline so single-file works) ──────
+(function() {
+  // SVG icon: green leaf / keto 'K' mark, rendered as PNG via canvas
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, 512, 512);
+  grad.addColorStop(0, '#2d7a48');
+  grad.addColorStop(1, '#3db86a');
+  ctx.fillStyle = grad;
+  const rad = 100;
+  ctx.beginPath();
+  ctx.moveTo(rad, 0);
+  ctx.lineTo(512 - rad, 0);
+  ctx.quadraticCurveTo(512, 0, 512, rad);
+  ctx.lineTo(512, 512 - rad);
+  ctx.quadraticCurveTo(512, 512, 512 - rad, 512);
+  ctx.lineTo(rad, 512);
+  ctx.quadraticCurveTo(0, 512, 0, 512 - rad);
+  ctx.lineTo(0, rad);
+  ctx.quadraticCurveTo(0, 0, rad, 0);
+  ctx.closePath();
+  ctx.fill();
+  // Letter K
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.font = 'bold 320px DM Sans, system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('K', 256, 270);
+  // Small leaf accent
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.beginPath();
+  ctx.ellipse(370, 155, 55, 28, Math.PI / 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  const icon512 = canvas.toDataURL('image/png');
+
+  // 192 version
+  canvas.width = 192; canvas.height = 192;
+  const ctx2 = canvas.getContext('2d');
+  const grad2 = ctx2.createLinearGradient(0, 0, 192, 192);
+  grad2.addColorStop(0, '#2d7a48');
+  grad2.addColorStop(1, '#3db86a');
+  ctx2.fillStyle = grad2;
+  const rad2 = 38;
+  ctx2.beginPath();
+  ctx2.moveTo(rad2, 0); ctx2.lineTo(192-rad2, 0);
+  ctx2.quadraticCurveTo(192, 0, 192, rad2);
+  ctx2.lineTo(192, 192-rad2);
+  ctx2.quadraticCurveTo(192, 192, 192-rad2, 192);
+  ctx2.lineTo(rad2, 192);
+  ctx2.quadraticCurveTo(0, 192, 0, 192-rad2);
+  ctx2.lineTo(0, rad2);
+  ctx2.quadraticCurveTo(0, 0, rad2, 0);
+  ctx2.closePath();
+  ctx2.fill();
+  ctx2.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx2.font = 'bold 120px DM Sans, system-ui, sans-serif';
+  ctx2.textAlign = 'center';
+  ctx2.textBaseline = 'middle';
+  ctx2.fillText('K', 96, 102);
+  const icon192 = canvas.toDataURL('image/png');
+
+  // Apple touch icon
+  const appleLink = document.createElement('link');
+  appleLink.rel = 'apple-touch-icon';
+  appleLink.href = icon512;
+  document.head.appendChild(appleLink);
+
+  // Manifest blob
+  const manifest = {
+    name: 'Keto Planner',
+    short_name: 'Keto',
+    description: 'Your personal ketogenic meal planner',
+    start_url: './',
+    display: 'standalone',
+    background_color: '#f7f3ef',
+    theme_color: '#3d8a57',
+    orientation: 'portrait',
+    icons: [
+      { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+      { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel   = 'manifest';
+  link.href  = url;
+  document.head.appendChild(link);
+})();
+
+// Auto-render today on load if that tab is default
+// (we start on Learn, so just prep plan silently)
+</script>
+</body>
+</html>

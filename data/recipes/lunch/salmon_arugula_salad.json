@@ -1,0 +1,14 @@
+{
+  "id": "salmon_arugula_salad",
+  "name": "Salmon & Arugula Salad",
+  "meal": "lunch",
+  "servings": 1,
+  "prep_minutes": 15,
+  "ingredients": [
+    { "item": "salmon", "qty_g": 130, "category": "protein", "note": "cooked fillet" },
+    { "item": "arugula", "qty_g": 80, "category": "vegetable" },
+    { "item": "avocado", "qty_g": 80, "category": "vegetable", "note": "half, sliced" },
+    { "item": "olive_oil", "qty_g": 15, "category": "fats_oils" },
+    { "item": "lemon_juice", "qty_g": 10, "category": "other" }
+  ]
+}

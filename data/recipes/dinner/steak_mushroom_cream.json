@@ -1,0 +1,14 @@
+{
+  "id": "steak_mushroom_cream",
+  "name": "Steak with Mushroom Cream Sauce",
+  "meal": "dinner",
+  "servings": 1,
+  "prep_minutes": 20,
+  "ingredients": [
+    { "item": "steak_ribeye", "qty_g": 200, "category": "protein" },
+    { "item": "mushrooms", "qty_g": 100, "category": "vegetable", "note": "sliced" },
+    { "item": "heavy_cream", "qty_g": 40, "category": "dairy" },
+    { "item": "butter", "qty_g": 15, "category": "fats_oils" },
+    { "item": "garlic", "qty_g": 5, "category": "vegetable", "note": "1 clove" }
+  ]
+}

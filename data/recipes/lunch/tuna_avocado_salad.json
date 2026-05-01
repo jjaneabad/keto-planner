@@ -1,0 +1,13 @@
+{
+  "id": "tuna_avocado_salad",
+  "name": "Tuna & Avocado Salad",
+  "meal": "lunch",
+  "servings": 1,
+  "prep_minutes": 8,
+  "ingredients": [
+    { "item": "tuna_canned", "qty_g": 130, "category": "protein", "note": "1 can, drained" },
+    { "item": "avocado", "qty_g": 80, "category": "vegetable", "note": "half, diced" },
+    { "item": "mayonnaise", "qty_g": 20, "category": "fats_oils" },
+    { "item": "celery", "qty_g": 40, "category": "vegetable", "note": "diced" }
+  ]
+}

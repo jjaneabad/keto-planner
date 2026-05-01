@@ -1,0 +1,13 @@
+{
+  "id": "garlic_chicken_zucchini",
+  "name": "Garlic Chicken with Zucchini",
+  "meal": "dinner",
+  "servings": 1,
+  "prep_minutes": 20,
+  "ingredients": [
+    { "item": "chicken_breast", "qty_g": 180, "category": "protein" },
+    { "item": "zucchini", "qty_g": 150, "category": "vegetable", "note": "sliced" },
+    { "item": "butter", "qty_g": 15, "category": "fats_oils" },
+    { "item": "garlic", "qty_g": 8, "category": "vegetable", "note": "2 cloves" }
+  ]
+}

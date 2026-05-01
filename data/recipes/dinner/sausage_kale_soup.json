@@ -1,0 +1,14 @@
+{
+  "id": "sausage_kale_soup",
+  "name": "Sausage & Kale Soup",
+  "meal": "dinner",
+  "servings": 1,
+  "prep_minutes": 25,
+  "ingredients": [
+    { "item": "pork_sausage", "qty_g": 120, "category": "protein" },
+    { "item": "kale", "qty_g": 80, "category": "vegetable", "note": "chopped" },
+    { "item": "heavy_cream", "qty_g": 40, "category": "dairy" },
+    { "item": "garlic", "qty_g": 5, "category": "vegetable", "note": "1 clove" },
+    { "item": "olive_oil", "qty_g": 10, "category": "fats_oils" }
+  ]
+}

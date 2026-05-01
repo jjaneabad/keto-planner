@@ -1,0 +1,13 @@
+{
+  "id": "garlic_butter_shrimp_zucchini",
+  "name": "Garlic Butter Shrimp with Zucchini",
+  "meal": "lunch",
+  "servings": 1,
+  "prep_minutes": 12,
+  "ingredients": [
+    { "item": "shrimp", "qty_g": 150, "category": "protein" },
+    { "item": "zucchini", "qty_g": 150, "category": "vegetable", "note": "spiralized or sliced" },
+    { "item": "butter", "qty_g": 20, "category": "fats_oils" },
+    { "item": "garlic", "qty_g": 5, "category": "vegetable", "note": "1 clove, minced" }
+  ]
+}

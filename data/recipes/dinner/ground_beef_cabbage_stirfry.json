@@ -1,0 +1,13 @@
+{
+  "id": "ground_beef_cabbage_stirfry",
+  "name": "Ground Beef & Cabbage Stir Fry",
+  "meal": "dinner",
+  "servings": 1,
+  "prep_minutes": 15,
+  "ingredients": [
+    { "item": "ground_beef", "qty_g": 180, "category": "protein" },
+    { "item": "cabbage", "qty_g": 150, "category": "vegetable", "note": "shredded" },
+    { "item": "olive_oil", "qty_g": 10, "category": "fats_oils" },
+    { "item": "onion", "qty_g": 30, "category": "vegetable", "note": "sliced" }
+  ]
+}

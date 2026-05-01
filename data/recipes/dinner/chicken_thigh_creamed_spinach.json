@@ -1,0 +1,14 @@
+{
+  "id": "chicken_thigh_creamed_spinach",
+  "name": "Chicken Thigh with Creamed Spinach",
+  "meal": "dinner",
+  "servings": 1,
+  "prep_minutes": 25,
+  "ingredients": [
+    { "item": "chicken_thigh", "qty_g": 200, "category": "protein", "note": "bone-in, skin-on" },
+    { "item": "spinach", "qty_g": 120, "category": "vegetable" },
+    { "item": "heavy_cream", "qty_g": 40, "category": "dairy" },
+    { "item": "garlic", "qty_g": 5, "category": "vegetable", "note": "1 clove" },
+    { "item": "olive_oil", "qty_g": 10, "category": "fats_oils" }
+  ]
+}
