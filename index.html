@@ -755,6 +755,65 @@ body {
 .mt-8 { margin-top: 8px; }
 .source-link { font-size: 11px; color: var(--fg-3); text-decoration: underline; text-underline-offset: 2px; }
 
+/* ── Nutrition table ─────────────────────────────────── */
+.nutr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.nutr-table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  padding: 6px 8px 8px;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.nutr-table th:not(:first-child) { text-align: right; }
+.nutr-table td {
+  padding: 8px 8px;
+  border-bottom: 1px solid var(--bg-subtle);
+  color: var(--fg-2);
+  vertical-align: middle;
+}
+.nutr-table td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+.nutr-table tr:last-child td { border-bottom: none; }
+.nutr-table .ing-name { color: var(--fg); font-weight: 500; }
+.nutr-table .ing-note { font-size: 11px; color: var(--fg-3); display: block; }
+.nutr-cat-header td {
+  background: var(--bg-subtle);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  padding: 6px 8px;
+  border-bottom: none;
+}
+.nutr-col-repeat th {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  padding: 4px 8px 5px;
+  border-bottom: 1px solid var(--border);
+  border-top: none;
+  background: oklch(98% 0.005 60);
+  opacity: 0.8;
+}
+.nutr-col-repeat th:not(:first-child) { text-align: right; }
+.nutr-bar {
+  display: inline-block;
+  height: 5px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
 /* ── Target inputs ───────────────────────────────────── */
 .target-grid {
   display: grid;
@@ -849,6 +908,19 @@ body {
               </ul>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nutrition Reference -->
+    <div class="card">
+      <div class="collapsible-header" onclick="toggleCollapsible(this); lazyLoadNutritionTable(this)">
+        <h2>Nutrition Reference</h2>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner" id="nutrition-table-wrap">
+          <div style="color:var(--fg-3);font-size:13px;">Loading…</div>
         </div>
       </div>
     </div>
@@ -978,6 +1050,7 @@ body {
         </div>
       </div>
     </div>
+
   </div>
 
   <!-- ── PLAN TAB ───────────────────────────────────── -->
@@ -1231,7 +1304,7 @@ function renderMealGrid() {
             <span class="macro-badge macro-carb">${macros.net_carbs}g carb</span>
           </div>
         </div>
-        <div class="meal-detail${isOpen ? ' open' : ''}" id="detail-${key}">
+        <div class="meal-detail open" id="detail-${key}">
           <div class="meal-detail-inner">
             ${recipe.ingredients.map(ing => `
               <div class="ingredient-row">
@@ -1391,10 +1464,9 @@ function openSwap(day, mealType) {
 
 function confirmSwap(recipeId) {
   if (!swapContext || !plan) return;
-  const { day, mealType } = swapContext;
+  const { day, mealType, fromToday } = swapContext;
   const recipe = RECIPES[mealType].find(r => r.id === recipeId);
   if (recipe) {
-    // Re-scale the swapped recipe to fit the day's calorie target for that meal slot
     const perMealCal = KETO_TARGETS.calories / 3;
     const raw = computeMacros(recipe);
     const factor = raw.calories > 0 ? perMealCal / raw.calories : 1;
@@ -1402,13 +1474,26 @@ function confirmSwap(recipeId) {
     saveState();
   }
   closeOverlay('overlay-swap');
-  renderMealGrid();
-  renderWeekSummary();
+  if (fromToday) {
+    renderToday();
+  } else {
+    renderMealGrid();
+    renderWeekSummary();
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
 // TODAY TAB
 // ══════════════════════════════════════════════════════════════
+
+// Determine which meal is current based on time of day
+function currentMealType() {
+  const h = new Date().getHours();
+  if (h < 10) return 'breakfast';         // before 10am → breakfast
+  if (h < 15) return 'lunch';             // 10am–3pm   → lunch
+  return 'dinner';                         // after 3pm  → dinner
+}
+
 function renderToday() {
   if (!plan) {
     plan = generatePlan();
@@ -1420,6 +1505,7 @@ function renderToday() {
   const todayIdx = dayMap[jsDay];
   const todayKey = DAYS[todayIdx];
   const dayPlan = plan[todayKey];
+  const activeMeal = currentMealType();
 
   // Date string
   const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -1442,9 +1528,9 @@ function renderToday() {
   function pct(val, target) { return Math.min(100, Math.round(val / target * 100)); }
 
   const macroRows = [
-    { label: 'Fat', val: dayMacros.fat, target: KETO_TARGETS.fat, isCarb: false },
-    { label: 'Protein', val: dayMacros.protein, target: KETO_TARGETS.protein, isCarb: false },
-    { label: 'Net Carbs', val: dayMacros.net_carbs, target: KETO_TARGETS.net_carbs, isCarb: true },
+    { label: 'Fat',       val: dayMacros.fat,       target: KETO_TARGETS.fat,       isCarb: false },
+    { label: 'Protein',   val: dayMacros.protein,   target: KETO_TARGETS.protein,   isCarb: false },
+    { label: 'Net Carbs', val: dayMacros.net_carbs, target: KETO_TARGETS.net_carbs, isCarb: true  },
   ];
 
   let html = `
@@ -1473,21 +1559,27 @@ function renderToday() {
           `).join('')}
         </div>
       </div>
-      <div style="margin-top:10px; font-size:12px; color:var(--fg-3); display:flex; gap:16px;">
-        <span>Target fat: ${KETO_TARGETS.fat}g</span>
+      <div style="margin-top:10px; font-size:12px; color:var(--fg-3); display:flex; gap:16px; flex-wrap:wrap;">
+        <span>Fat: ${KETO_TARGETS.fat}g</span>
         <span>Protein: ${KETO_TARGETS.protein}g</span>
         <span>Carbs: ≤${KETO_TARGETS.net_carbs}g</span>
       </div>
     </div>`;
 
-  for (const mealType of ['breakfast', 'lunch', 'dinner']) {
+  // Render meals — active meal first, expanded; others collapsed
+  const mealOrder = ['breakfast', 'lunch', 'dinner'];
+
+  for (const mealType of mealOrder) {
     const recipe = dayPlan[mealType];
     const macros = computeMacros(recipe);
-    const alts = RECIPES[mealType].filter(r => r.id !== recipe.id).slice(0, 3);
     const mLabel = mealType.charAt(0).toUpperCase() + mealType.slice(1);
+    const isActive = mealType === activeMeal;
+
     html += `
-      <div class="today-meal-label">${mLabel}</div>
-      <div class="today-meal-card">
+      <div class="today-meal-label" style="${isActive ? 'color:var(--green);' : ''}">
+        ${mLabel}${isActive ? ' <span style="font-size:10px;background:var(--green-light);color:var(--green);padding:1px 7px;border-radius:10px;font-weight:700;vertical-align:middle;">Now</span>' : ''}
+      </div>
+      <div class="today-meal-card" style="${isActive ? 'border:1.5px solid var(--green);' : 'opacity:0.75;'}">
         <div class="today-meal-main">
           <div class="today-meal-info">
             <div class="today-meal-name">${recipe.name}</div>
@@ -1500,19 +1592,14 @@ function renderToday() {
           </div>
           <button class="today-meal-swap-btn" onclick="openTodaySwap('${todayKey}','${mealType}')">Swap</button>
         </div>
-        <div class="alt-options">
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--fg-3);margin-bottom:4px;">Quick alternatives</div>
-          ${alts.map(alt => {
-            const am = computeMacros(alt);
-            return `
-              <div class="alt-option" onclick="swapTodayMeal('${todayKey}','${mealType}','${alt.id}')">
-                <div class="alt-option-name">${alt.name}</div>
-                <div class="alt-option-macros">
-                  <span class="macro-badge macro-fat" style="font-size:10px;">F${am.fat}</span>
-                  <span class="macro-badge macro-carb" style="font-size:10px;">${am.net_carbs}c</span>
-                </div>
-              </div>`;
-          }).join('')}
+        <div class="meal-detail-inner" style="border-top:1px solid var(--bg-subtle);padding:12px 16px 14px;">
+          ${recipe.ingredients.map(ing => `
+            <div class="ingredient-row">
+              <div class="ingredient-name">${prettyIngredientName(ing.item)}${ing.note ? '<span style="color:var(--fg-3);font-size:11px;"> — ' + ing.note + '</span>' : ''}</div>
+              <div class="ingredient-qty">${ing.qty_g}g</div>
+            </div>
+          `).join('')}
+          <div class="detail-meta" style="margin-top:10px;">Prep: ${recipe.prep_minutes} min${recipe._scale && recipe._scale !== 1 ? ` &nbsp;·&nbsp; ${recipe._scale}× portion` : ''}</div>
         </div>
       </div>`;
   }
@@ -1521,11 +1608,28 @@ function renderToday() {
 }
 
 function openTodaySwap(day, mealType) {
-  openSwap(day, mealType);
-  // After swap, re-render today
-  const origConfirm = window.confirmSwap;
-  window._todaySwapDay = day;
-  window._todaySwapMeal = mealType;
+  swapContext = { day, mealType, fromToday: true };
+  const current = plan[day][mealType];
+  document.getElementById('swap-title').textContent = 'Swap ' + mealType.charAt(0).toUpperCase() + mealType.slice(1);
+  const options = RECIPES[mealType];
+  const list = document.getElementById('swap-list');
+  list.innerHTML = options.map(r => {
+    const m = computeMacros(r);
+    const isCurrent = r.id === current.id;
+    return `
+      <div class="swap-option${isCurrent ? ' current' : ''}" onclick="confirmSwap('${r.id}')">
+        <div>
+          <div class="swap-option-name">${r.name}</div>
+          <div class="swap-option-prep">${r.prep_minutes} min</div>
+        </div>
+        <div class="swap-option-macros">
+          <span class="macro-badge macro-fat">F${m.fat}</span>
+          <span class="macro-badge macro-pro">P${m.protein}</span>
+          <span class="macro-badge macro-carb">${m.net_carbs}c</span>
+        </div>
+      </div>`;
+  }).join('');
+  openOverlay('overlay-swap');
 }
 
 function swapTodayMeal(day, mealType, recipeId) {
@@ -1539,9 +1643,6 @@ function swapTodayMeal(day, mealType, recipeId) {
     renderToday();
   }
 }
-
-// Override confirmSwap to also update today if we came from today tab
-const _origConfirmSwap = window.confirmSwap;
 
 // ══════════════════════════════════════════════════════════════
 // SETTINGS
@@ -1874,6 +1975,76 @@ Return ONLY the JSON object, no explanation.`;
 }
 
 // ══════════════════════════════════════════════════════════════
+// NUTRITION REFERENCE TABLE (lazy)
+// ══════════════════════════════════════════════════════════════
+let nutritionTableLoaded = false;
+function lazyLoadNutritionTable(header) {
+  if (nutritionTableLoaded) return;
+  nutritionTableLoaded = true;
+
+  const GROUPS = [
+    { label: 'Proteins',       keys: ['eggs','bacon','chicken_breast','chicken_thigh','ground_beef','steak_ribeye','pork_chop','pork_sausage','lamb','salmon','cod','shrimp','tuna_canned','turkey_breast'] },
+    { label: 'Vegetables',     keys: ['avocado','spinach','broccoli','cauliflower','zucchini','kale','asparagus','bell_pepper','mushrooms','cucumber','lettuce_romaine','cabbage','green_beans','celery','brussels_sprouts','arugula','tomato','onion','garlic','olives_black'] },
+    { label: 'Dairy',          keys: ['butter','heavy_cream','cream_cheese','cheddar','parmesan','feta'] },
+    { label: 'Fats & Oils',    keys: ['olive_oil','coconut_milk','mayonnaise','mustard_dijon'] },
+    { label: 'Pantry & Other', keys: ['almond_flour','chia_seeds','macadamia_nuts','lemon_juice'] },
+  ];
+
+  const maxFat  = Math.max(...Object.values(NUTRITION_DB).map(v => v.fat));
+  const maxPro  = Math.max(...Object.values(NUTRITION_DB).map(v => v.protein));
+  const maxCarb = Math.max(...Object.values(NUTRITION_DB).map(v => v.net_carbs));
+
+  function bar(val, max, color) {
+    const w = Math.max(2, Math.round(val / max * 40));
+    return `<span class="nutr-bar" style="width:${w}px;background:${color};opacity:0.7;"></span>`;
+  }
+
+  let html = `
+    <p style="font-size:12px;color:var(--fg-3);margin-bottom:12px;line-height:1.5;">All values per 100g · Source: USDA FoodData Central</p>
+    <div style="overflow-x:auto;margin:0 -2px;">
+    <table class="nutr-table">
+      <thead><tr>
+        <th>Ingredient</th>
+        <th>Fat</th>
+        <th>Protein</th>
+        <th>Carbs</th>
+        <th>kcal</th>
+      </tr></thead>
+      <tbody>`;
+
+  const colHeaders = `<tr class="nutr-col-repeat">
+    <th></th>
+    <th>Fat</th>
+    <th>Protein</th>
+    <th>Carbs</th>
+    <th>kcal</th>
+  </tr>`;
+
+  for (const group of GROUPS) {
+    html += `<tr class="nutr-cat-header"><td colspan="5">${group.label}</td></tr>`;
+    html += colHeaders;
+    for (const key of group.keys) {
+      const d = NUTRITION_DB[key];
+      if (!d) continue;
+      html += `<tr>
+        <td><span class="ing-name">${prettyIngredientName(key)}</span></td>
+        <td>${d.fat}g ${bar(d.fat, maxFat, 'var(--amber)')}</td>
+        <td>${d.protein}g ${bar(d.protein, maxPro, 'var(--blue)')}</td>
+        <td>${d.net_carbs}g ${bar(d.net_carbs, maxCarb, 'var(--green)')}</td>
+        <td>${d.calories}</td>
+      </tr>`;
+    }
+  }
+
+  html += `</tbody></table></div>
+    <div style="margin-top:12px;">
+      <a class="source-link" href="https://fdc.nal.usda.gov/" target="_blank">USDA FoodData Central — verify values at source</a>
+    </div>`;
+
+  document.getElementById('nutrition-table-wrap').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════
 // OVERLAY HELPERS
 // ══════════════════════════════════════════════════════════════
 function openOverlay(id) {
@@ -1997,5 +2168,6 @@ updateAiButton();
 // Auto-render today on load if that tab is default
 // (we start on Learn, so just prep plan silently)
 </script>
+<div id="tweaks-root"></div>
 </body>
 </html>
