@@ -12,7 +12,7 @@ data/           Nutrition database and recipe files
     breakfast/  One JSON file per recipe
     lunch/
     dinner/
-app/            The single-page app (served by GitHub Pages)
+index.html      The single-page app (served by GitHub Pages)
 scripts/        Build tools
 ```
 
@@ -28,7 +28,3 @@ Open `app/index.html` in a browser. For file fetching to work locally, use a sim
 ```bash
 cd app && python3 -m http.server 8000
 ```
-
-## Deployment
-
-Configure GitHub Pages to serve from the `app/` folder.
